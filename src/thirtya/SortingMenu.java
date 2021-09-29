@@ -12,7 +12,7 @@ public class SortingMenu {
         int[] randomInts = generateRandomIntegers();
         System.out.println("The numbers have been generated.");
         System.out.println("Please select a sorting algorithm:");
-        System.out.println(" 1. Bubble Sort\n 2. Insertion Sort\n 3. Selection Sort\n 4. Merge Sort\n 5. Quick Sort\n 6. Heap Sort");
+        System.out.println(" 1. Bubble Sort\n 2. Insertion Sort\n 3. Selection Sort\n 4. Merge Sort\n 5. Quick Sort\n 6. Counting Sort");
         int choice = userInput.nextInt();
         long startTime = System.nanoTime();
         int[] sortedArray = null;
@@ -24,16 +24,16 @@ public class SortingMenu {
                 sortedArray = insertionSort(randomInts);
                 break;
             case 3:
-//                sortedArray = selectionSort(randomInts);
+                sortedArray = selectionSort(randomInts);
                 break;
             case 4:
-//                sortedArray = mergeSort(randomInts);
+                sortedArray = mergeSortWrapper(randomInts);
                 break;
             case 5:
-//                sortedArray = quickSort(randomInts);
+                sortedArray = quickSortWrapper(randomInts);
                 break;
             case 6:
-//                sortedArray = heapSort(randomInts);
+                sortedArray = countingSort(randomInts);
                 break;
             default:
                 System.out.println("Error in selecting choice, exiting program...");
@@ -42,7 +42,7 @@ public class SortingMenu {
         }
         long endTime = System.nanoTime();
         double timeElapsed = (endTime - startTime) / 1e9;
-        System.out.println("");
+        System.out.println();
         for (int num : sortedArray) {
             System.out.println(num);
         }
@@ -58,17 +58,21 @@ public class SortingMenu {
         return randomInts;
     }
 
+    public static void swap(int[] arrayToBeSwapped, int x, int y) {
+        int swapNum = arrayToBeSwapped[x];
+        arrayToBeSwapped[x] = arrayToBeSwapped[y];
+        arrayToBeSwapped[y] = swapNum;
+    }
+
     public static int[] bubbleSort(int[] input) {
-        int completed = 0, tempNumForSwapping;
+        int completed = 0, swapNum;
         boolean sorted = false;
         while (!sorted) {
             sorted = true;
             for (int i = 0; i < input.length - completed - 1; i++) {
                 iterations++;
                 if (input[i] > input[i + 1]) {
-                    tempNumForSwapping = input[i];
-                    input[i] = input[i + 1];
-                    input[i + 1] = tempNumForSwapping;
+                    swap(input, i, i+1);
                     sorted = false;
                 }
             }
@@ -78,7 +82,6 @@ public class SortingMenu {
     }
 
     public static int[] insertionSort(int[] input) {
-        boolean sorted = false;
         for (int i = 1; i < input.length; i++) {
             int numberForMoving = input[i];
             int positionSelector = i-1;
@@ -90,5 +93,101 @@ public class SortingMenu {
             input[positionSelector + 1] = numberForMoving;
         }
         return input;
+    }
+
+    public static int[] selectionSort(int[] input) {
+        for (int i = 0; i < input.length - 1; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j < input.length; j++) {
+                if (input[j] < input[minIndex]) {
+                    minIndex = j;
+                    iterations++;
+                }
+            }
+            swap(input, i, minIndex);
+            iterations++;
+        }
+        return input;
+    }
+
+    public static int[] mergeSortWrapper(int[] input) {
+        mergeSort(input, input.length);
+        return input;
+    }
+
+    public static void mergeSort(int[] input, int length) {
+        if (input.length < 2) {
+            return;
+        }
+        int mid = input.length / 2;
+        int[] leftArray = new int[mid];
+        int[] rightArray = new int[input.length - mid];
+        for (int i = 0; i < mid; i++) {
+            leftArray[i] = input[i];
+        }
+        for (int i = mid; i < input.length; i++) {
+            rightArray[i - mid] = input[i];
+        }
+        mergeSort(leftArray, mid);
+        mergeSort(rightArray, input.length - mid);
+        int i = 0, j = 0, k = 0;
+        while (i < mid && j < input.length - mid) {
+            iterations++;
+            if (leftArray[i] <= rightArray[j]) {
+                input[k++] = leftArray[i++];
+            }
+            else {
+                input[k++] = rightArray[j++];
+            }
+        }
+        while (i < mid) {
+            input[k++] = leftArray[i++];
+            iterations++;
+        }
+        while (j < input.length - mid) {
+            iterations++;
+            input[k++] = rightArray[j++];
+        }
+    }
+
+    public static int[] quickSortWrapper(int[] input) {
+        quickSort(input, 0, input.length-1);
+        return input;
+    }
+
+    public static void quickSort(int[] input, int left, int right) {
+        if (left < right) {
+            int pivot = input[right];
+            int i = left - 1;
+            for (int j = left; j < right; j++) {
+                if (input[j] <= pivot) {
+                    i++;
+                    iterations++;
+                    swap(input, i, j);
+                }
+            }
+            swap(input, i + 1, right);
+            quickSort(input, left, i);
+            quickSort(input, i + 2, right);
+        }
+    }
+
+    public static int[] countingSort(int[] input) {
+        int[] countArray = new int[10000];
+        for (int i : input) {
+            countArray[i]++;
+            iterations++;
+        }
+        for (int i = 0; i < countArray.length - 1; i++) {
+            countArray[i+1] = countArray[i+1] + countArray[i];
+            iterations++;
+        }
+        int[] sorted = new int[input.length];
+        for (int i : input) {
+            sorted[countArray[i]-1] = i;
+            countArray[i]--;
+            iterations++;
+        }
+        return sorted;
     }
 }
