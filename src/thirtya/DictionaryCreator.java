@@ -9,10 +9,14 @@ import java.util.Scanner;
 
 public class DictionaryCreator {
     public static void main(String[] args) throws IOException {
+
+        // Initizing the reading of the file
         Scanner reader = new Scanner(new File("C:\\temp_Jim\\PrideAndPrejudice.txt"));
         FileWriter writer = new FileWriter("C:\\temp_Jim\\Dictionary.out");
         TreeMap<String, Integer> dictionary = new TreeMap<>();
         int totalWordCount = 0;
+
+        // loop to go through the incoming piece of text
         while (reader.hasNext()) {
             String[] currentLine = reader.nextLine().replaceAll("[^a-zA-Z ]","").split("\\s+");
             if (currentLine.length == 1 && currentLine[0].equals("")) {

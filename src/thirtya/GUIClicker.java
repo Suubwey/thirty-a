@@ -4,15 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class JFrameGUIClicker implements ActionListener {
-    private int clicks = 0;
+public class GUIClicker implements ActionListener {
     private JLabel label = new JLabel("Clicks Per Second");
     private JFrame frame = new JFrame();
     private int count;
     private long timeOfLastClick = 0;
     private double totalTime;
 
-    public JFrameGUIClicker() {
+    public GUIClicker() {
 
         // the clickable button
         JButton button = new JButton("Click Me");
@@ -47,6 +46,6 @@ public class JFrameGUIClicker implements ActionListener {
 
     // create one Frame
     public static void main(String[] args) {
-        new JFrameGUIClicker();
+        new GUIClicker();
     }
 }
