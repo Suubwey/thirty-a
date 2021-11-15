@@ -20,8 +20,8 @@ public class StackLL implements StackIntrfc {
 
     @Override
     public double peek() {
-        // just returns the first item in the list with the getFirst method.
-        return stack.getFirst();
+        // just returns the last item in the list with the getLast method.
+        return stack.getLast();
     }
 
     @Override
